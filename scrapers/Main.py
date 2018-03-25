@@ -1,5 +1,6 @@
 import sys
-import SongProcessor
+
+from scrapers import SongProcessor
 
 songs = []
 with open(sys.argv[1], "r") as in_file:
