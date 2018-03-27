@@ -112,7 +112,7 @@ def get_all_songs_from_artist(url_prototype, parser):
 #write_artists_to_file()
 
 song_list_parser = songLinkHTMLParser()
-with open("artist_url_list.txt", 'r') as artist_suffixes:
+with open("scrapers/artist_url_list.txt", 'r') as artist_suffixes:
     with open("song_urls.txt", 'a', 1) as out_file:
         for artist_suffix in artist_suffixes:
             url = 'https://www.ultimate-guitar.com'+artist_suffix+'?filter=chords&page={}'

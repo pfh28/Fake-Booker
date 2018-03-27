@@ -1,6 +1,9 @@
+import random
+import time
 import requests
 from html.parser import HTMLParser
 import json
+import re
 
 
 class MyHTMLParser(HTMLParser):
@@ -34,3 +37,5 @@ def get_raw_song(url):
     parser = MyHTMLParser()
     parser.feed(page.content.decode())
     return parser.song_data
+
+print(get_raw_song("https://tabs.ultimate-guitar.com/tab/queen/bohemian_rhapsody_chords_40606"))

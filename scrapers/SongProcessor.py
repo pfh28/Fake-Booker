@@ -1,4 +1,4 @@
-import songparsers
+import scrapers.songparsers
 
 from scrapers import songscraper
 
