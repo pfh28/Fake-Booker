@@ -1,5 +1,7 @@
 import random
 import time
+from pprint import pprint
+
 import requests
 from html.parser import HTMLParser
 import json
@@ -23,6 +25,11 @@ class MyHTMLParser(HTMLParser):
             try:
                 data = data.split("= ", 1)[1]
                 parsed_data = json.loads(data[:-2])
+            #    pprint(parsed_data["data"]['tab_view']['wiki_tab']['content'])
+                self.song_data['rating'] = parsed_data["data"]["tab"]["rating"]
+                self.song_data['favorites'] = parsed_data["data"]["tab_view"]["stats"]["favorites_count"]
+                self.song_data['views'] = parsed_data["data"]["tab_view"]["stats"]["view_total"]
+                self.song_data['votes'] = parsed_data["data"]["tab"]["votes"]
                 self.song_data['song_name'] = parsed_data["data"]['tab']['song_name']
                 self.song_data['artist'] = parsed_data["data"]['tab']['artist_name']
                 self.song_data['song'] = parsed_data["data"]['tab_view']['wiki_tab']['content']
@@ -38,4 +45,4 @@ def get_raw_song(url):
     parser.feed(page.content.decode())
     return parser.song_data
 
-print(get_raw_song("https://tabs.ultimate-guitar.com/tab/queen/bohemian_rhapsody_chords_40606"))
+get_raw_song("https://tabs.ultimate-guitar.com/tab/queen/bohemian_rhapsody_chords_40606")

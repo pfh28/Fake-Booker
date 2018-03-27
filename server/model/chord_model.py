@@ -6,8 +6,7 @@ class Chord():
         self.is_minor = False
         self.is_major = False
         self.chord_tail = ""
-        self.chord_string = chord_string
-        chord_string = chord_string.strip()
+        self.chord_string = chord_string.strip()
         if "/" in chord_string:
             chord_string,self.bass_note = chord_string.split("/")
         if len(chord_string) > 1:                                   #if chord is not sinle letter
@@ -73,4 +72,4 @@ note.transpose_chord_up_one()
 note.transpose_chord_up_one()
 note.transpose_chord_up_one()
 note.transpose_chord_up_one()
-print(note)
+#print(note)
