@@ -43,6 +43,8 @@ def get_raw_song(url):
     page = requests.get(url)
     parser = MyHTMLParser()
     parser.feed(page.content.decode())
-    return parser.song_data
+    rv = parser.song_data
+    rv['url'] = url
+    return rv
 
 get_raw_song("https://tabs.ultimate-guitar.com/tab/queen/bohemian_rhapsody_chords_40606")

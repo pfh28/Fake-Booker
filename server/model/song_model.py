@@ -1,16 +1,20 @@
 from server.model.chord_model import Chord
 
 class Song():
-    def __init__(self, raw_song_data, url):
-        self.rating = int(raw_song_data['rating']) or 0
-        self.favorite_count = int(raw_song_data['favorites']) or 0
-        self.views = int(raw_song_data['views']) or 0
-        self.votes = int(raw_song_data['votes']) or 0
-        self.song_name = raw_song_data['song_name'] or ""
-        self.artist = raw_song_data['artist'] or ""
-        self.raw_song_text = raw_song_data['song'] or ""
-        self.chords = {}
-        self.parse_song(raw_song_data['song'])
+    def __init__(self, data, is_restore=False):
+        if is_restore:
+            self.__dict__ = data
+        else:
+            self.rating = int(data['rating']) or 0
+            self.favorite_count = int(data['favorites']) or 0
+            self.views = int(data['views']) or 0
+            self.votes = int(data['votes']) or 0
+            self.song_name = data['song_name'] or ""
+            self.artist = data['artist'] or ""
+            self.url = data['url'] or ""
+            self.raw_song_text = data['song'] or ""
+            self.chords = {}
+            self.parse_song(data['song'])
 
     def parse_song(self, song_text):
         song_parts = song_text.split("[ch]")                    # split into sections starting with a chord
@@ -29,3 +33,8 @@ class Song():
         for chord_string, chord in self.chords.items():
             rv = rv.replace("[ch]" + chord_string + "[/ch]", str(chord))    # str(chord) prints the transposed chord
         return rv
+
+    def jsonable(self):
+        rv = self.__dict__
+        rv["__type__"] = "Song"
+        return self.__dict__

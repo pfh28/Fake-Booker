@@ -66,6 +66,12 @@ class Chord():
             bass = "/"+self.bass_note
         return str(self.note + "{}" + self.chord_tail + "{}").format(mod, bass)      #note[m[aj]][sus[\d]][/bass_note]
 
+    def jsonable(self):
+        rv = {}
+        rv["__type__"] = "Chord"
+        rv["string"] = self.chord_string
+        return rv
+
 note = Chord("Abmajsus7")
 note.transpose_chord_up_one()
 note.transpose_chord_up_one()
