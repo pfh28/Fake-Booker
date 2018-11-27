@@ -6,6 +6,9 @@ from server.model.chord_model import Chord
 import scrapers.songscraper as scraper
 import json
 
+client = MongoClient()  # assumes local
+db = client['fake_booker']
+collection = db['song']
 
 #url = "https://tabs.ultimate-guitar.com/tab/elvis_presley/cant_help_falling_in_love_chords_1086983"
 '''raw_song = scraper.get_raw_song(url)
@@ -42,12 +45,18 @@ print(type(deserialized))
 def store_song(song):
     serialized = json.dumps(song, default=complex_handler)
     dicted = json.loads(serialized)
-    client = MongoClient()      # assumes local
-    db = client['fake_booker']
-    collection = db['song']
     collection.insert(dicted)
 
 
+def get_songs_matching(search_term):
+    sresult = collection.find({"artist": "tim"})
+    for item in sresult:
+        print(item)
+
+
+get_songs_matching("sd")
+
+'''
 with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/scrapers/song_url_all.txt", 'r') as song_file:
     for url in song_file:
         if re.search("https://tabs.ultimate-guitar.com/tab/\w*/\w*", url):
@@ -59,7 +68,7 @@ with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/
             url_song_data['song_name'] = url.split("/")[1].replace("_", " ")
             song = Song(url_song_data, is_restore=True)
             store_song(song)
-
+'''
 
 
 
