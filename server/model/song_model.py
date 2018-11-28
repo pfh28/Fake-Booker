@@ -5,16 +5,13 @@ class Song():
         if is_restore:
             self.__dict__ = data
         else:
-            self.rating = int(data['rating']) or 0
-            self.favorite_count = int(data['favorites']) or 0
-            self.views = int(data['views']) or 0
-            self.votes = int(data['votes']) or 0
             self.song_name = data['song_name'] or ""
             self.artist = data['artist'] or ""
-            self.url = data['url'] or ""
-            self.raw_song_text = data['song'] or ""
+            self.genre = data['genre'] or ""
+            self.album = data['album'] or ""
+            self.raw_song_text = data['song_text'] or ""
             self.chords = {}
-            self.parse_song(data['song'])
+            self.parse_song(data['song_text'])
 
     def parse_song(self, song_text):
         song_parts = song_text.split("[ch]")                    # split into sections starting with a chord
@@ -32,6 +29,12 @@ class Song():
         rv = self.raw_song_text
         for chord_string, chord in self.chords.items():
             rv = rv.replace("[ch]" + chord_string + "[/ch]", str(chord))    # str(chord) prints the transposed chord
+        return rv
+
+    def get_terminal_song_text(self):
+        rv = self.raw_song_text
+        for chord_string, chord in self.chords.items():
+            rv = rv.replace("[ch]" + chord_string + "[/ch]", '\033[1m'+str(chord)+'\033[0m')    # print chords bolded
         return rv
 
     def jsonable(self):

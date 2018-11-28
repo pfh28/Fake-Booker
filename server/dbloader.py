@@ -7,7 +7,7 @@ import scrapers.songscraper as scraper
 import json
 
 client = MongoClient()  # assumes local
-db = client['fake_booker']
+db = client['fake_booker_365']
 collection = db['song']
 
 #url = "https://tabs.ultimate-guitar.com/tab/elvis_presley/cant_help_falling_in_love_chords_1086983"
@@ -54,7 +54,7 @@ def get_songs_matching(search_term):
         print(item)
 
 
-get_songs_matching("sd")
+#get_songs_matching("sd")
 
 '''
 with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/scrapers/song_url_all.txt", 'r') as song_file:
