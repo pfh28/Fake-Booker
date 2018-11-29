@@ -85,6 +85,16 @@ def store_book(book):
     dicted = json.loads(serialized)
     collection.insert(dicted)
 
+def get_book_list():
+    collection = db['book']
+    sresult = collection.find({})
+    rv = []
+    for record in sresult:
+        serialized = json.dumps(record)
+        deserialized = json.loads(serialized, object_hook=song_decoder)
+        rv.append(deserialized)
+    return rv
+
 '''
 with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/scrapers/song_url_all.txt", 'r') as song_file:
     for url in song_file:

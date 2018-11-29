@@ -15,7 +15,16 @@ def force_get_string(prompt):
     return rv
 
 
-
+def select_book_for(action):
+    print("Pick a book to {}".format(action))
+    books = dbloader.get_book_list()
+    for i in range(len(books)):
+        print(str(i+1) + " \t" + books[i].title)
+    selection = input("\nselect a song number. 0 to go back.")
+    if selection.isdigit() and 0 < int(selection) <= len(books):    # if a valid index is selected
+        return books[int(selection) - 1]
+    else:
+        return None
 
 
 def collect_chords():
@@ -55,24 +64,31 @@ def add_book_dialog():
     dbloader.store_book(book)
 
 
+def view_book(book):
+    print(book.get_details())
+
 
 def show_book_menu():
-    command = input("[N]ew book/[D]elete book/[E]dit book/[P]rint book/[V]iew book/[B]ack\n")
-    command = command.lower()
-    if re.match("n.*", command):
-        add_book_dialog()
-    elif re.match("d.*", command):
-        delete_song()
-    elif re.match("e.*", command):
-        edit_song()
-    elif re.match("p.*", command):
-        print_book()
-    elif re.match("v.*", command):
-        print_book()
-    elif re.match("b.*", command):
-        return
-    else:
-        print("not a valid command")
+    while True:
+        command = input("[N]ew book/[D]elete book/[E]dit book/[P]rint book/[V]iew book/[B]ack\n")
+        command = command.lower()
+        if re.match("n.*", command):
+            add_book_dialog()
+        elif re.match("d.*", command):
+            delete_song()
+        elif re.match("e.*", command):
+            edit_song()
+        elif re.match("p.*", command):
+            print_book()
+        elif re.match("v.*", command):
+            book = select_book_for("view")
+            if book is None:
+                continue
+            view_book(book)
+        elif re.match("b.*", command):
+            return
+        else:
+            print("not a valid command")
 
 
 while True:
