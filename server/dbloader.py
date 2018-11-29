@@ -9,12 +9,12 @@ import json
 client = MongoClient()  # assumes local
 db = client['fake_booker_365']
 collection = db['song']
-
-#url = "https://tabs.ultimate-guitar.com/tab/elvis_presley/cant_help_falling_in_love_chords_1086983"
-'''raw_song = scraper.get_raw_song(url)
+'''
+url = "https://tabs.ultimate-guitar.com/tab/elvis_presley/cant_help_falling_in_love_chords_1086983"
+raw_song = scraper.get_raw_song(url)
 song = Song(raw_song)
 song.transpose_up_one()
-#print(str(song.get_song_text()))
+print(str(song.get_song_text()))
 '''
 
 def complex_handler(obj):
@@ -49,12 +49,15 @@ def store_song(song):
 
 
 def get_songs_matching(search_term):
-    sresult = collection.find({"artist": "tim"})
-    for item in sresult:
-        print(item)
+    sresult = collection.find(search_term)
+    rv = []
+    for record in sresult:
+        rv.append(Song(record, True))
+    return rv
 
+def delete_song(song):
+    collection.delete_one({"_id": song._id})
 
-#get_songs_matching("sd")
 
 '''
 with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/scrapers/song_url_all.txt", 'r') as song_file:
@@ -68,7 +71,12 @@ with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/
             url_song_data['song_name'] = url.split("/")[1].replace("_", " ")
             song = Song(url_song_data, is_restore=True)
             store_song(song)
+
+
+with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/scrapers/InFile.txt", 'r') as song_file:
+    for url in song_file:
+        raw_song = scraper.get_raw_song(url)
+        song = Song(raw_song)
+        store_song(song)
 '''
-
-
 
