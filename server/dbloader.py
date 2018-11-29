@@ -52,11 +52,18 @@ def get_songs_matching(search_term):
     sresult = collection.find(search_term)
     rv = []
     for record in sresult:
-        rv.append(Song(record, True))
+        serialized = json.dumps(record)
+        deserialized = json.loads(serialized, object_hook=complex_decoder)
+        rv.append(deserialized)
     return rv
 
 def delete_song(song):
     collection.delete_one({"_id": song._id})
+
+
+def replace_song(song):
+    delete_song(song)
+    store_song(song)
 
 
 '''

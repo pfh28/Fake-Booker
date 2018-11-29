@@ -13,38 +13,51 @@ def ask_y_n(prompt):
         else:
             print("Please enter [Y]es or [n]o\n")
 
+
+def print_song(song):
+    print("\n" + song.song_name)
+    print(song.artist)
+    print(song.get_terminal_song_text())
+
+
+def save_song_dialog(song, message=""):
+    print_song(song)
+    print(message)
+    correct = ask_y_n("\nAll chords should appear above in bold.\nDoes that look right?")
+    if correct:
+        dbloader.store_song(song)
+        print("Saved song")
+    else:
+        print("Your file may need reformatting. The format should be as follows:\n"
+              + "song name\n"
+              + "artist name\n"
+              + "album\n"
+              + "genre\n"
+              + "song chord sheet, with chords tagged. e.g. [ch]D7[/ch]")
+
+
+def read_song_from_file(path):
+    with open(path, "r") as in_file:
+        song_data = {}
+        song_data['song_name'] = in_file.readline().strip()
+        song_data['artist'] = in_file.readline().strip()
+        song_data['album'] = in_file.readline().strip()
+        song_data['genre'] = in_file.readline().strip()
+        blank_count = 0  # loop terminates when two blank lines are read
+        song_data['song_text'] = ""
+        while blank_count < 2:
+            line = in_file.readline()
+            song_data['song_text'] += line
+            if line == '':
+                blank_count += 1
+    return Song(song_data)
+
+
 def add_song_dialog():
     infile_path = input("Enter the path of a file with song data.\n")
     if os.path.isfile(infile_path):
-        with open(infile_path, "r") as in_file:
-            song_data = {}
-            song_data['song_name'] = in_file.readline().strip()
-            song_data['artist'] = in_file.readline().strip()
-            song_data['album'] = in_file.readline().strip()
-            song_data['genre'] = in_file.readline().strip()
-            blank_count = 0             # loop terminates when two blank lines are read
-            song_data['song_text'] = ""
-            while blank_count < 2:
-                line = in_file.readline()
-                song_data['song_text'] += line
-                if line == '':
-                    blank_count += 1
-
-        song = Song(song_data)
-        print("\n"+song.song_name)
-        print(song.artist)
-        print(song.get_terminal_song_text())
-        correct = ask_y_n("\nAll chords should appear above in bold.\nDoes that look right?")
-        if correct:
-            dbloader.store_song(song)
-            print("Saved song")
-        else:
-            print("Your file may need reformatting. The format should be as follows:\n"
-                  + "song name\n"
-                  + "artist name\n"
-                  + "album\n"
-                  + "genre\n"
-                  + "song chord sheet, with chords tagged. e.g. [ch]D7[/ch]")
+        song = read_song_from_file(infile_path)
+        save_song_dialog(song)
     else:
         print("file not found")
 
@@ -72,8 +85,22 @@ def select_song_for(action):
     else:
         return None
 
-def edit_song(song):
-    pass
+
+def edit_song(song):                                    # song is written to a file for editing
+    edit_file_path = "{}{}.txt".format(song.song_name, song._id).replace(" ", "_")
+    if os.path.isfile(edit_file_path):                  # if the file exists, read it in
+        song = read_song_from_file(edit_file_path)
+        song._id = song._id
+        save_song_dialog(song, "it looks like you've edited this song")
+    else:                                               # if it doesn't, write it
+        with open(edit_file_path, "w") as out_file:
+            out_file.write(song.song_name + "\n")
+            out_file.write(song.artist + "\n")
+            out_file.write(song.album + "\n")
+            out_file.write(song.genre + "\n")
+            out_file.write(song.raw_song_text)
+        print("\nThe song details are written in {}.\n".format(edit_file_path)
+              + "Edit the file, and then select this song again for editing to save your changes.\n")
 
 
 def generate_songbook():
@@ -82,8 +109,8 @@ def generate_songbook():
 
 def show_song_menu():
     command = ""
-    while not re.match("b.*", command):
-        command = input("[A]dd song/[D]elete song/[E]dit song/[B]ack\n").lower()
+    while True:
+        command = input("[A]dd song/[D]elete song/[E]dit song/[V]iew song/[B]ack\n").lower()
         if re.match("a.*", command):
             add_song_dialog()
         elif re.match("d.*", command):
@@ -96,6 +123,13 @@ def show_song_menu():
             if song is None:
                 continue
             edit_song(song)
+        elif re.match("v.*", command):
+            song = select_song_for("view")
+            if song is None:
+                continue
+            print_song(song)
+        elif re.match("b.*", command):
+            return
         else:
             print("not a valid command")
 
@@ -105,7 +139,7 @@ def print_book():
 
 
 def show_book_menu():
-    command = input("[N]ew book/[D]elete book/[E]dit book/[P]rint book/[B]ack\n")
+    command = input("[N]ew book/[D]elete book/[E]dit book/[P]rint book/[V]iew book/[B]ack\n")
     command = command.lower()
     if re.match("n.*", command):
         add_song_dialog()
@@ -115,12 +149,14 @@ def show_book_menu():
         edit_song()
     elif re.match("p.*", command):
         print_book()
+    elif re.match("v.*", command):
+        print_book()
     elif re.match("b.*", command):
         return
     else:
         print("not a valid command")
 
-# select_song_for("test")
+
 while True:
     command = input("Manage: [S]ongs/[B]ooks, or [Q]uit\n").lower()
     if re.match("s.*", command):
