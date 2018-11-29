@@ -1,3 +1,6 @@
+import re
+
+
 class Chord():
     note_list = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
     def __init__(self, chord_string):
@@ -26,7 +29,7 @@ class Chord():
                     chord_string = chord_string[1:]
 
             self.chord_tail = chord_string
-        else:                                                       #single-letter chords
+        else:                                                       # single-letter chords
             self.note = chord_string
         self.sharpen()
 
@@ -42,10 +45,10 @@ class Chord():
             self.bass_note = self.flat_to_sharp(self.bass_note)
 
     def flat_to_sharp(self, note):
-        if 'A' in note:                 #dealing with that wrap
+        if 'A' in note:                 # dealing with that wrap
             return "G#"
         if __name__ == '__main__':
-            return chr(ord(note[0]-1))+"#"  #shift down, call it a sharp
+            return chr(ord(note[0]-1))+"#"  # shift down, call it a sharp
 
     def transpose_note_up_one(self, chord_string):
         index = self.note_list.index(chord_string)
@@ -54,6 +57,12 @@ class Chord():
         else:
             index += 1
         return self.note_list[index]
+
+    @staticmethod
+    def looks_like_chord(symbol):
+        if re.fullmatch("[ABCDEFG](#|b)?(m|maj)?(sus)?\d?(/[ABCDEFG](#|b)?)?", symbol):
+            return True
+        return False
 
     def __str__(self):
         mod = ""
