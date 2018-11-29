@@ -57,6 +57,7 @@ def get_songs_matching(search_term):
         rv.append(deserialized)
     return rv
 
+
 def delete_song(song):
     collection.delete_one({"_id": song._id})
 
