@@ -30,7 +30,7 @@ def song_decoder(obj):
         elif obj["__type__"] == 'Song':
             return Song(obj, is_restore=True)
         elif obj["__type__"] == 'SongBook':
-            rv = SongBook(obj['title'], obj['preferred_chords'])
+            rv = SongBook(obj['title'], obj['preferred_chords'], obj["_id"])
             for song_id in obj['songs']:
                 songs = get_songs_matching({"_id": song_id})
                 if len(songs) > 0:
@@ -95,6 +95,17 @@ def get_book_list():
         rv.append(deserialized)
     return rv
 
+
+def delete_book(book):
+    collection = db['book']
+    collection.delete_one({"_id": book._id})
+
+
+def replace_book(book):
+    collection = db['book']
+    delete_book(book)
+    store_book(book)
+
 '''
 with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/scrapers/song_url_all.txt", 'r') as song_file:
     for url in song_file:
@@ -115,4 +126,3 @@ with open("/home/patrick/pfhFiles/PersonalProgramming/python/guitar/fake-booker/
         song = Song(raw_song)
         store_song(song)
 '''
-

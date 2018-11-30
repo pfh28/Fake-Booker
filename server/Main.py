@@ -50,7 +50,9 @@ def print_book():
 
 def add_songs(book):
     while True:
-        book.add_song(select_song_for("add"))
+        song = select_song_for("add")
+        if song is not None:
+            book.add_song(song)
         if not ask_y_n("Add another song?"):
             return
 
@@ -68,6 +70,45 @@ def view_book(book):
     print(book.get_details())
 
 
+def delete_book(book):
+    if ask_y_n("Are you sure you want to delete {}?".format(book.title)):
+        dbloader.delete_book(book)
+        print("Deleted {}.".format(book.title))
+
+
+def remove_songs(book):
+    while True:
+        if len(book.songs) == 0:
+            print("No more songs to remove")
+            return
+        print("\nSelect a song to remove.\n")
+        book.remove_song(select_song(book.songs))
+        if not ask_y_n("Remove another song from {}?".format(book.title)):
+            return
+
+
+def edit_book_dialog(book):
+    while True:
+        view_book(book)
+        command = input("Update [T]itle/[P]referred chords/[A]dd Songs/[R]emove Songs/[F]inish\n").lower()
+        if re.match("t.*", command):
+            book.title = force_get_string("Set songbook title.")
+        elif re.match("p.*", command):
+            print("Resetting selected chords.")
+            book.preferred_chords = collect_chords()
+        elif re.match("a.*", command):
+            add_songs(book)
+        elif re.match("r.*", command):
+            remove_songs(book)
+        elif re.match("f.*", command):
+            if ask_y_n("Save changes to {}?".format(book.title)):
+                dbloader.replace_book(book)
+                print("replaced book")
+            else:
+                print("cancelled")
+            return
+
+
 def show_book_menu():
     while True:
         command = input("[N]ew book/[D]elete book/[E]dit book/[P]rint book/[V]iew book/[B]ack\n")
@@ -75,9 +116,15 @@ def show_book_menu():
         if re.match("n.*", command):
             add_book_dialog()
         elif re.match("d.*", command):
-            delete_song()
+            book = select_book_for("delete")
+            if book is None:
+                continue
+            delete_book(book)
         elif re.match("e.*", command):
-            edit_song()
+            book = select_book_for("edit")
+            if book is None:
+                continue
+            edit_book_dialog(book)
         elif re.match("p.*", command):
             print_book()
         elif re.match("v.*", command):

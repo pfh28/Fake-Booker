@@ -2,11 +2,11 @@ import uuid
 
 
 class SongBook():
-    def __init__(self, book_title, preferred_chords):
+    def __init__(self, book_title, preferred_chords, uid=str(uuid.uuid4())):
         self.title = book_title
         self.preferred_chords = preferred_chords
         self.songs = []
-        self._id = str(uuid.uuid4())
+        self._id = uid
 
     def set_title(self, book_title):
         self.title = book_title
@@ -16,6 +16,9 @@ class SongBook():
 
     def add_song(self, song):
         self.songs.append(song)
+
+    def remove_song(self, song):
+        self.songs.remove(song)
 
     def get_details(self):
         rv = self.title + "\n" + "Preferred Chords: "

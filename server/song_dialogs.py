@@ -3,7 +3,7 @@ import re
 
 from server.model.song_model import Song
 from server import dbloader
-from server.utils import ask_y_n
+from server.utils import ask_y_n, select_song
 
 
 def print_song(song):
@@ -71,13 +71,7 @@ def select_song_for(action):
     for k, v in features.items():       # hacky, but I'm using the initial values as prompts.
         features[k] = re.compile(".*" + input(v + ": ") + ".*", re.IGNORECASE)
     songs = dbloader.get_songs_matching(features)
-    for i in range(len(songs)):
-        print(str(i+1) + " \t" + songs[i].song_name)
-    selection = input("\nselect a song number. 0 to go back.")
-    if selection.isdigit() and 0 < int(selection) <= len(songs):    # if a valid index is selected
-        return songs[int(selection) - 1]
-    else:
-        return None
+    return select_song(songs)
 
 
 def edit_song(song):                                    # song is written to a file for editing
